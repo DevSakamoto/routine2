@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>バレー🏐</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <!-- 自作 CSS -->
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class ="hideInPrint">
+    <h3>バレー🏐 </h3>
+    <a href="#Page説明" data-toggle="collapse">Page説明</a>
+    <div id="Page説明" class="collapse">
+      <div class="border" style="padding:10px;">
+        <b>名前</b>【<b>パラメータ合計</b>】<br>
+        <b>説明</b>（メンバー固有の説明文）<br>
+        <b>レシーブ</b>：ディグの上手さ（安定感、精度）<br>
+        <b>トス</b>：トス・セットアップの上手さ（安定感、精度）<br>
+        <b>スパイク</b>：スパイクの上手さ（安定感、コントロール、パワー、得点力）<br>
+        <b>サーブ</b>：サーブの上手さ（安定感、コントロール、パワー、得点力）<br>
+        <b>高さ</b>：身長、ジャンプ、到達する高さを使いこなせているか<br>
+      </div>
+      <a href="https://w-yoyaku-fujimi-city.seagulloffice.com/stagia/reserve/gin_menu">富士見市総合体育館予約ページ</a>
+      <p style="color: darkgrey;font-size: xx-small;">画像はHADOランキングページ(例:D
+        https://hado-official.com/wp-content/uploads/wachawacha_d.jpg) <- なければTwitterの投稿から（例: なお
+          https://pbs.twimg.com/media/FtVMRHkacAI1G07?format=jpg）ダウンロード先から画像が消えたらこちらのページの画像も消えます</p>
+    </div>
+    <div class="card-columns"></div>
+    <div class="col dropdown">
+      並び替え
+      <button type="button" id="callOptionDropDown" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">並び替え</button>
+      <ul class="dropdown-menu" id="sortDropDown">
+        <li><button class="dropdown-item" value="1">レシーブ</button></li>
+        <li><button class="dropdown-item" value="2">トス</button></li>
+        <li><button class="dropdown-item" value="3">スパイク</button></li>
+        <li><button class="dropdown-item" value="4">サーブ</button></li>
+        <li><button class="dropdown-item" value="5">高さ</button></li>
+        <li><button class="dropdown-item" value="6">合計</button></li>
+      </ul>
+    </div>
+    </div>
+    <div class="row" id="output"></div>
+  </div>
+
+  <!-- Bootstrap JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="js/util.js"></script>
+  <script>
+    var loadData;
+    var sortValue = 0;
+    function init() {
+      createHeader();
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://docs.google.com/spreadsheets/d/1ntRLq7cuneQYNULNtV8tq7QQlk3DmQcuuuOmVXAlCsc/export?format=csv', true);
+      xhr.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+          loadData = this.responseText.split("\r\n");
+          loadData.splice(0, 1);
+          console.log("done")
+          creatContents()
+
+        };
+      };
+      xhr.send();
+    }
+    init();
+    setFunc()
+
+    var temp = '<div class="card"><img src="{img}" class="card-img-top cover" style="padding:5px;";><div class="card-body"><h5 class="card-title"><b>{name}【{合計}】</b></h5><p class="card-text">{info}</p><table class="table table-sm"><tbody><tr><th scope="row">レシーブ</th><td>{レシーブ}</td></tr><tr><th scope="row">トス</th><td>{トス}</td></tr><tr><th scope="row">スパイク</th><td>{スパイク}</td></tr><tr><th scope="row">サーブ</th><td>{サーブ}</td></tr><tr><th scope="row" style="width: 40%">高さ</th><td>{高さ}</td></tr></tbody></table><p style = "color:lightgray;font-size:8px">{date}</p></div></div>';
+    function parceStar(num) {
+      var ret = num + " ";
+      for (let index = 0; index < num; index++) {
+        ret += "★";
+      }
+      return ret;
+    }
+
+    function setFunc() {
+      $('.dropdown-menu .dropdown-item').click(function () {
+        var visibleItem = $('.dropdown-toggle', $(this).closest('.dropdown'));
+        visibleItem.text($(this).text());
+        visibleItem.attr('value', $(this).attr('value'));
+        _recordChildList = [];
+        sortValue = Number($(this).attr('value'));
+        creatContents();
+      });
+    }
+
+    function creatContents() {
+      output.innerHTML = "";
+      /** 現在のDateオブジェクト作成 */
+      var d = new Date();
+      /** 日付を文字列にフォーマットする */
+      var formatted = `
+        ${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}
+        `.replace(/\n|\r/g, '');
+      loadData = loadData.sort((a, b) => b.split(",")[sortValue] - a.split(",")[sortValue]);
+      for (let index = 0; index < loadData.length; index++) {
+        var mData = loadData[index].split(",");
+        var record = document.createElement("div");
+        record.className = "col-md-2 mb-2";
+        record.innerHTML = temp.replace(/{name}/g, mData[0])
+        record.style.padding = "5px";
+        record.innerHTML = record.innerHTML.replace(/{レシーブ}/g, parceStar(mData[1]));
+        record.innerHTML = record.innerHTML.replace(/{トス}/g, parceStar(mData[2]));
+        record.innerHTML = record.innerHTML.replace(/{スパイク}/g, parceStar(mData[3]));
+        record.innerHTML = record.innerHTML.replace(/{サーブ}/g, parceStar(mData[4]));
+        record.innerHTML = record.innerHTML.replace(/{高さ}/g, parceStar(mData[5]));
+        record.innerHTML = record.innerHTML.replace(/{合計}/g, mData[6]);
+        record.innerHTML = record.innerHTML.replace(/{info}/g, mData[7])
+        record.innerHTML = record.innerHTML.replace(/{img}/g, mData[8])
+        record.innerHTML = record.innerHTML.replace(/{date}/g, "Ranking:"+(index +1)+"　ViewDate:"+formatted)
+        output.appendChild(record);
+      }
+    }
+  </script>
+</body>
+
+</html>

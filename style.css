@@ -1,0 +1,13 @@
+.cover {
+    aspect-ratio: 110/100;
+    object-position: center;
+    background-color:white;
+    object-fit: cover;
+}
+
+
+@media print {
+    .hideInPrint{
+      display: none;
+    }
+  }

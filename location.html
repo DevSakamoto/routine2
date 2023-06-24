@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Current Location</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1>Current Location</h1>
+      <p id="current-location"></p>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="js/util.js"></script>
+    <script>
+      createHeader();
+      // 現在の位置情報を取得する
+      function getLocation() {
+        // Geolocation APIがサポートされているか確認する
+        if (navigator.geolocation) {
+          // 位置情報の取得を許可するダイアログを表示する
+          navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+          // Geolocation APIがサポートされていない場合は、エラーメッセージを表示する
+          alert("Geolocation is not supported by this browser.");
+        }
+      }
+
+      // 位置情報を取得した後に実行されるコールバック関数
+      function showPosition(position) {
+        // 緯度と経度を取得する
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        // 逆ジオコーディングAPIを使用して、緯度と経度から住所を取得する
+        const geocodingUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
+        fetch(geocodingUrl)
+          .then(response => response.json())
+          .then(data => {
+            // 住所を表示する
+            const address = data.display_name;
+            document.getElementById("current-location").textContent = `Your current location is: ${address}`;
+          })
+          .catch(error => {
+            console.error("Error:", error);
+          });
+      }
+
+      // ページがロードされた後に実行される
+      window.onload = function() {
+        getLocation();
+      };
+    </script>
+  </body>
+</html>

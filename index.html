@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="css/index.css" rel="stylesheet">
+  <link href="css/animation.css" rel="stylesheet">
+
+  <link rel="icon" href="resource/favicon.ico" id="favicon">
+  <link rel="apple-touch-icon" sizes="180x180" href="resource/apple-touch-icon-180x180.png">
+
+  <style>
+    body {
+      background-color: #000000;
+      color: #ffffff
+    }
+
+  </style>
+
+
+  <title>ルーチン</title>
+</head>
+
+<body>
+
+
+  <div class="fixed-bottom" style="display: none;">
+    <div class="form-group">
+      <label for="consoleOutput bg-light" style="font-size: 8px;">Console Output:</label>
+      <textarea class="form-control" id="consoleOutput" rows="10" style="font-size: 8px;"></textarea>
+    </div>
+  </div>
+
+  <div class="container-fluid mt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <label for="volumeSlider">🔊</label>
+          <input type="range" class="form-control-range" id="volumeSlider" min="1" max="100" value="50">
+        </div>
+        <div class="col dropdown">
+          <button type="button" id="callOptionDropDown" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">def</button>
+          <ul class="dropdown-menu" id="routineIdDropDown">
+            <li><button class="dropdown-item" id="routineId" value="def">def</button></li>
+          </ul>
+        </div>
+        <div class="col dropdown">
+          <button type="button" id="callOptionDropDown" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">なし default</button>
+          <ul class="dropdown-menu">
+            <li><button class="dropdown-item" value="999999999999999999">なし default</button></li>
+            <li><button class="dropdown-item" value="15">15秒毎</button></li>
+            <li><button class="dropdown-item" value="30">30秒毎</button></li>
+            <li><button class="dropdown-item" value="60">1分毎</button></li>
+            <li><button class="dropdown-item" value="120">2分毎</button></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <button type="button" class="btn btn-secondary" id="speakBtn"> startBtn </button>
+    <button type="button" class="btn btn-secondary" id="pauseBtn" disabled> pauseBtn </button>
+
+
+
+    <!-- <p>Set a date and time: <input type="datetime-local" id="dateTimeInput"></p>-->
+    <hr>
+    <p class="text-lg-center">
+      <label id="currentWorkDetailLabel" style="font-weight: bolder; font-size: 24pt;">現在のタスク</label>
+    </p>
+    <p class="text-lg-center">
+      <button type="button" class="btn btn-secondary" id="backBtn"> ◀︎ </button>
+      <label>　　</label>
+      <button type="button" class="btn btn-secondary" id="forwardBtn"> ▶︎ </button>
+    </p>
+
+    <div class="progress" style="height: 35px;">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 70%" aria-valuemax="100" id="currentProgressBar">
+        <h5 id="currentWorkLabel" style="text-align: left;">WorkName</h5>
+      </div>
+    </div>
+
+
+    <!-- <button id="addRowButton">Add Row</button> -->
+    <table class="table table-hover table-dark table-sm table-bordered" id="dataTable">
+      <thead>
+        <tr>
+          <th scope="col" style="text-align: center;font-size: 1.5vmin;font-weight:lighter;">check</th>
+          <!-- <th scope="col" style="text-align: center;font-size: 1.5vmin;font-weight:lighter;">no</th> -->
+          <th scope="col" style="text-align: center;font-size: 1.5vmin;font-weight:lighter;">name</th>
+          <th scope="col" style="text-align: center;font-size: 1.5vmin;font-weight:lighter;">time</th>
+          <!-- <th scope="col" style="text-align: center;font-size: 1.5vmin;font-weight:lighter;">開始日時</th> -->
+          <th scope="col" style="text-align: center;font-size: 1.5vmin;font-weight:lighter;">del</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Option 1: Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+  <!-- Optional JavaScript; choose one of the two! -->
+  <script src="js/util.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/script.js"></script>
+
+
+
+
+  <script>
+
+  </script>
+  <!-- Option 2: Separate Popper and Bootstrap JS -->
+  <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    -->
+</body>
+
+</html>

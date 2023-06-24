@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>スライドゲーム</title>
+    <style>
+        #game-container {
+            width: 700px;
+            height: 700px;
+            border: 2px solid black;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+
+        }
+
+        .tile {
+            background-color: #fff;
+            border: 1px solid black;
+            font-size: 0px;
+            text-align: center;
+            line-height: 100px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+
+        }
+
+        .tile.slide-right {
+            transform: translateX(100%);
+        }
+
+        .tile.slide-left {
+            transform: translateX(-100%);
+        }
+
+        .tile.slide-up {
+            transform: translateY(-100%);
+        }
+
+        .tile.slide-down {
+            transform: translateY(100%);
+        }
+    </style>
+</head>
+
+<body>
+    <div style="display: flex;justify-content: center;">
+        <div id="game-container">
+            <!-- ゲームのコンテンツをここに追加する -->
+        </div>
+    </div>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="js/util.js"></script>
+    <script>
+        const imgArr = ["direct_S4S4P1Y0.jpg", "wachawacha_d.jpg", "arcas_sho.jpg", "dax_koto.jpg", "arcas_ryu.jpg", "unicorn_gutty.jpg", "unicorn_yukipo.jpg", "unicorn_nakajim.jpg", "unicorn_r1o.jpg", "ahirugumi_ruhia.jpg", "dax_ree.jpg", "yajyutobejo_moke.jpg", "yajyutobejo_Jemmy.jpg", "yajyutobejo_cocoa.jpg", "laughmonsters_ottsuu.jpg", "hibana_yone.jpg", "hibana_zuumaa.jpg",]
+        const randomIndex = Math.floor(Math.random() * imgArr.length);
+        const imageFileName = imgArr[randomIndex]
+        // ゲームのサイズ
+        const GAME_SIZE = 4;
+
+        // ゲームのタイル数
+        const NUM_TILES = GAME_SIZE * GAME_SIZE;
+
+        // ゲームのコンテナを取得
+        const gameContainer = document.getElementById('game-container');
+
+        // ゲームのタイルの値を表す配列を生成
+        let tileValues = Array.from({ length: NUM_TILES - 1 }, (_, i) => i + 1);
+        tileValues.push(null); // null は空きスペースを表す
+        var nullTile;
+        // 空のタイルの位置を取得
+        const getNullTilePosition = () => {
+        const nullIndex = tiles.indexOf(nullTile);
+        const nullRow = Math.floor(nullIndex / GAME_SIZE);
+        const nullCol = nullIndex % GAME_SIZE;
+        return [nullRow, nullCol];
+        };
+        
+
+        // ゲームのタイルを生成
+        let tiles = tileValues.map((value) => {
+
+            const tile = document.createElement('div');
+            tile.classList.add('tile');
+            tile.textContent = value;
+
+            if (value == null) {
+                nullTile = tile;
+            } else {
+                tile.style.backgroundImage = 'url(https://hado-official.com/wp-content/uploads/' + imageFileName + ')';
+                var x = value - 1
+                const tileRow = Math.floor(x / GAME_SIZE);
+                const tileCol = x % GAME_SIZE;
+                tile.style.backgroundPosition = `-${tileCol * 700 / GAME_SIZE}px -${tileRow * 700 / GAME_SIZE}px`;
+            }
+            return tile;
+        });
+
+        // ゲームのタイルをランダムに配置
+        tiles.sort(() => Math.random() - 0.5);
+        tiles.forEach((tile) => {
+            gameContainer.appendChild(tile);
+        });
+
+        // ゲームのタイルのクリックイベントを追加
+        tiles.forEach((tile) => {
+            tile.addEventListener('click', () => {
+                const tileIndex = tiles.indexOf(tile);
+                const tileRow = Math.floor(tileIndex / GAME_SIZE);
+                const tileCol = tileIndex % GAME_SIZE;
+                const nullIndex = tiles.indexOf(nullTile);
+                const nullRow = Math.floor(nullIndex / GAME_SIZE);
+                const nullCol = nullIndex % GAME_SIZE;
+
+                // 空きスペースとタイルが隣接している場合、タイルを移動
+                if (
+                    (tileRow === nullRow && Math.abs(tileCol - nullCol) === 1) ||
+                    (tileCol === nullCol && Math.abs(tileRow - nullRow) === 1)
+                ) {
+                    // タイルを移動
+                    tiles[tileIndex] = nullTile;
+                    tiles[nullIndex] = tile;
+                    moveTile(tile); // アニメーションを追加
+
+
+
+                    // ゲームがクリアされたかどうかを確認
+                    if (isGameClear()) {
+                        alert('おめでとう！ゲームをクリアしました！');
+                    }
+                }
+            });
+        });
+
+        // ゲームがクリアされたかどうかを判断する関数
+        function isGameClear() {
+            for (let i = 0; i < NUM_TILES - 1; i++) {
+                if (tiles[i].textContent !== i + 1) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        function moveTile(tile) {
+            const tileIndex = tiles.indexOf(tile);
+            const tileRow = Math.floor(tileIndex / GAME_SIZE);
+            const tileCol = tileIndex % GAME_SIZE;
+            const nullIndex = tiles.indexOf(nullTile);
+            const nullRow = Math.floor(nullIndex / GAME_SIZE);
+            const nullCol = nullIndex % GAME_SIZE;
+
+            // タイルを移動する方向を決定する
+            let direction;
+            if (tileRow === nullRow && tileCol > nullCol) {
+                direction = 'slide-right';
+            } else if (tileRow === nullRow && tileCol < nullCol) {
+                direction = 'slide-left';
+            } else if (tileCol === nullCol && tileRow > nullRow) {
+                direction = 'slide-down';
+            } else if (tileCol === nullCol && tileRow < nullRow) {
+                direction = 'slide-up';
+            }
+
+            // タイルを移動する
+            tile.classList.add(direction);
+            setTimeout(() => {
+                tile.classList.remove(direction);
+                // ゲームの表示を更新する
+                gameContainer.innerHTML = '';
+                tiles.forEach((tile) => {
+                    gameContainer.appendChild(tile);
+                });
+            }, 100);
+        }
+
+    </script>
+</body>
+
+</html>
